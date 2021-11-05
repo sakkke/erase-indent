@@ -74,9 +74,7 @@ test('erase successful with including empty lines and two levels of nesting', ()
     main()`)
   eraser.erase()
   expect(eraser.string).toBe(`function main () {
-  if (true) {
-    // ok
-  }
+  // ok
 }
 
 main()
