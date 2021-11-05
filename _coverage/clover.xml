@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1636118982920" clover="3.2.0">
-  <project timestamp="1636118982920" name="All files">
+<coverage generated="1636119902099" clover="3.2.0">
+  <project timestamp="1636119902099" name="All files">
     <metrics statements="17" coveredstatements="17" conditionals="5" coveredconditionals="5" methods="9" coveredmethods="9" elements="31" coveredelements="31" complexity="0" loc="17" ncloc="17" packages="1" files="1" classes="1"/>
     <file name="main.ts" path="/home/runner/work/erase-indent/erase-indent/src/main.ts">
       <metrics statements="17" coveredstatements="17" conditionals="5" coveredconditionals="5" methods="9" coveredmethods="9"/>
