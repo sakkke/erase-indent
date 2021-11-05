@@ -1,7 +1,7 @@
 {
-  "name": "@sakkke/nodejs-ultimate-template",
-  "version": "0.5.0",
-  "description": "A starter template for Node.js",
+  "name": "@sakkke/erase-indent",
+  "version": "0.1.0",
+  "description": "Indent eraser",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
