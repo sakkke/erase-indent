@@ -1,3 +1,3 @@
-import { main } from './main'
+import { Main } from './main'
 
-export { main as default }
+export { Main as Eraser }
