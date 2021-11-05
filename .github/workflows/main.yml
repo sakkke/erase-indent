@@ -1,0 +1,124 @@
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PUBLISH_GPR_SCOPE: "@sakkke"
+  PUBLISH_NPM_SCOPE: "@0wv"
+
+jobs:
+  gh-pages:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: npm ci
+      - run: npm run docs:all
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_docs
+
+  publish-gpr:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    if: "startsWith(github.event.head_commit.message, ':bookmark:')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: https://npm.pkg.github.com/
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: "sed -Ei 's,\"name\": \".+/(.+)\",\"name\": \"${{ env.PUBLISH_GPR_SCOPE }}/\\1\",' package.json"
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npm:
+    needs: test
+    runs-on: ubuntu-latest
+    if: "startsWith(github.event.head_commit.message, ':bookmark:')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: https://registry.npmjs.org/
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: "sed -Ei 's,\"name\": \".+/(.+)\",\"name\": \"${{ env.PUBLISH_NPM_SCOPE }}/\\1\",' package.json"
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  version-major:
+    runs-on: ubuntu-latest
+    if: "startsWith(github.event.head_commit.message, ':boom:')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: git config --global user.name github-actions
+      - run: git config --global user.email github-actions@github.com
+      - run: "npm version major -m ':bookmark: %s'"
+      - run: git push --follow-tags
+
+  version-minor:
+    runs-on: ubuntu-latest
+    if: "startsWith(github.event.head_commit.message, ':sparkles:')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: git config --global user.name github-actions
+      - run: git config --global user.email github-actions@github.com
+      - run: "npm version minor -m ':bookmark: %s'"
+      - run: git push --follow-tags
+
+  version-patch:
+    runs-on: ubuntu-latest
+    if: "startsWith(github.event.head_commit.message, ':bug:')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: npm
+      - run: git config --global user.name github-actions
+      - run: git config --global user.email github-actions@github.com
+      - run: "npm version patch -m ':bookmark: %s'"
+      - run: git push --follow-tags
